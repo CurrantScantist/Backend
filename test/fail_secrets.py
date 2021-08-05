@@ -1,0 +1,1 @@
+CONNECTION_STRING_FAIL = "mongodb+srv://admin:@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
