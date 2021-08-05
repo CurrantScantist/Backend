@@ -22,7 +22,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest
-          pip install -r FastAPI-mongoDB/app/requirements.txt
+          pip install -r requirements.txt
       - name: Test with pytest
     
         env:
