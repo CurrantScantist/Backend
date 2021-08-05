@@ -42,13 +42,3 @@ async def retrieve_releases(name: str, owner:str) -> dict:
     async for release in release_collection.find({"name": name, "owner": owner}):
         releases.insert(0,release_helper(release))
     return releases
-    # release = await release_collection.find({"name": name})
-    # if release:
-    #     return release_helper(release)
-    
-
-    # techstacks = []
-    # async for techstack in techstack_collection.find():
-    #     techstacks.append(techstack_helper(techstack))
-    # print(techstacks)
-    # return techstacks
