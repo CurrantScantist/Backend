@@ -31,10 +31,6 @@ async def get_techstacks():
     
 @router.get("/list", response_description="Techstacks retrieved")
 async def get_techstacks():
-    '''
-    Once called, starts the process of retrieving all techstacks, accompanied with all their metadata.
-    :return:  Response Model that gives indication of all techstack retrieval success or failure
-    '''
     techstacks = await retrieve_techstack_name()
     if techstacks:
         return ResponseModel(techstacks, "Techstacks data retrieved successfully")

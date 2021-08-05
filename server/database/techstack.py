@@ -97,3 +97,4 @@ async def retrieve_techstack_name() -> dict:
     print(techstacks_name)
     return techstacks_name
 
+print(techstack_collection)
