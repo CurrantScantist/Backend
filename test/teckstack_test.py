@@ -9,7 +9,7 @@ import time
 # from dotenv import load_dotenv
 
 # from test.fail_secrets import CONNECTION_STRING_FAIL
-
+# Testing should work
 # # Works on Local Machine
 from server.database import connect
 from dotenv import load_dotenv
