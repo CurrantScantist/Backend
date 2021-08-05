@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/detailed", response_description="Techstacks retrieved")
 async def get_techstacks():
     '''
-    Once called, starts the process of retrieving all techstacks
+    Once called, starts the process of retrieving all techstacks, accompanied with all their metadata.
     :return:  Response Model that gives indication of all techstack retrieval success or failure
     '''
     techstacks = await retrieve_techstacks()
@@ -31,6 +31,10 @@ async def get_techstacks():
     
 @router.get("/list", response_description="Techstacks retrieved")
 async def get_techstacks():
+    '''
+    Once called, starts the process of retrieving all techstacks, but only accompanied with their id, name and owner.
+    :return: Response Model that gives indication that all techstack retrieval and their id,name and owner metadata, is successful.
+    '''
     techstacks = await retrieve_techstack_name()
     if techstacks:
         return ResponseModel(techstacks, "Techstacks data retrieved successfully")
