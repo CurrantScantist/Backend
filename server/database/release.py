@@ -38,8 +38,17 @@ async def retrieve_releases(name: str, owner:str) -> dict:
     :return: Call release_helper() on the given release, which returns its respective metadata
     '''
     
-    release = await release_collection.find_one({"name": name, "owner": owner})
-    if release:
-        return release_helper(release)
+    releases = []
+    async for release in release_collection.find({"name": name, "owner": owner}):
+        releases.insert(0,release_helper(release))
+    return releases
+    # release = await release_collection.find({"name": name})
+    # if release:
+    #     return release_helper(release)
     
-    
+
+    # techstacks = []
+    # async for techstack in techstack_collection.find():
+    #     techstacks.append(techstack_helper(techstack))
+    # print(techstacks)
+    # return techstacks

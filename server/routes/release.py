@@ -16,7 +16,7 @@ from server.models.release import (
 router = APIRouter()
 
 
-@router.get("/{name_owner}release_data", response_description="release data retrieved")
+@router.get("/{name_owner}", response_description="release data retrieved")
 async def get_release_data(name, owner):
     '''
     Once the release name and owner name is provided, starts the process of retrieving the specified release data
