@@ -70,7 +70,6 @@ async def retrieve_techstacks():
     techstacks = []
     async for techstack in techstack_collection.find():
         techstacks.append(techstack_helper(techstack))
-    print(techstacks)
     return techstacks
 
 
