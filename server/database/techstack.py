@@ -7,7 +7,9 @@ Retrieve techstack and techstack data from the mongodb database
 """
 # Connecting to MongoDB and getting the database test_db with the collection name repositories
 load_dotenv()
-CONNECTION_STRING=os.getenv('CONNECTION_STRING')
+PASSWORD=os.getenv('PASSWORD')
+USERNAME=os.getenv('NAME')
+CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
 database = DatabaseConnection(CONNECTION_STRING)
 database.connection_to_db("test_db")
 techstack_collection = database.database_name.get_collection("repositories")
