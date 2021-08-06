@@ -24,7 +24,9 @@ def test_mongoDB_connection_correct():
 
     check = False
     load_dotenv()
-    CONNECTION_STRING=os.getenv('CONNECTION_STRING')
+    PASSWORD=os.getenv('PASSWORD')
+    USERNAME=os.getenv('NAME')
+    CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
     # Connecting to MongoDB and getting the database test_db with the collection name repositories
     try:
         database = connect.DatabaseConnection(CONNECTION_STRING)
