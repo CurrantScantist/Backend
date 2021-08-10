@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from server.database.techstack import (
     retrieve_techstack,
     retrieve_techstacks,
-    retrieve_techstack_name,
+    retrieve_techstack_important_info,
 
 )
 from server.models.techstack import (
@@ -35,7 +35,7 @@ async def get_techstacks():
     Once called, starts the process of retrieving all techstacks, but only accompanied with their id, name and owner.
     :return: Response Model that gives indication that all techstack retrieval and their id,name and owner metadata, is successful.
     '''
-    techstacks = await retrieve_techstack_name()
+    techstacks = await retrieve_techstack_important_info()
     if techstacks:
         return ResponseModel(techstacks, "Techstacks data retrieved successfully")
     return ResponseModel(techstacks, "Empty list returned")
