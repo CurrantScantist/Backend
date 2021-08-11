@@ -46,7 +46,7 @@ def techstack_helper(techstack) -> dict:
         "languages": techstack["languages"],
         "topics": techstack["topics"],
     }
-def techstack_helper_name(techstack) -> dict:
+def techstack_helper_important_info(techstack) -> dict:
     '''
     Helps retrieve only id, name, and owner of a techstack in dictionary format.
     :param techstack: techstack object from database
@@ -56,10 +56,12 @@ def techstack_helper_name(techstack) -> dict:
         "id": str(techstack["_id"]),
         "name": techstack["name"],
         "owner": techstack["owner"],
+        "stargazers_count": techstack["stargazers_count"],
+        "topics": techstack["topics"],
+        "forks": techstack["forks"],
         # "releases": techstack["releases"],
     }
     
-# Retrieve all techstacks present in the database
 async def retrieve_techstacks():
     '''
     Retrieve all unique techstacks in the database
@@ -72,7 +74,6 @@ async def retrieve_techstacks():
     return techstacks
 
 
-# Retrieve a techstack with a matching ID
 async def retrieve_techstack(name: str, owner:str) -> dict:
     '''
     Retrieve a specific techstack and its metadata, from the database with matching name and owner
@@ -85,16 +86,16 @@ async def retrieve_techstack(name: str, owner:str) -> dict:
         return techstack_helper(techstack)
 
 
-# Retrieve all techstack repo detail with few information (Id, name and owner)
-async def retrieve_techstack_name() -> dict:
+async def retrieve_techstack_important_info() -> dict:
     '''
     Retrieve all techstack repo detail with few information (Id, name and owner)
-    :return: Call techstack_helper_name() on the given techstack, which returns its techstack id, name and owner.
+    :return: Call retrieve_techstack_important_info() on the given techstack, which returns its techstack id, name, 
+    owner and imortant information.
     '''
-    techstacks_name = []
+    
+    techstacks_important_info = []
     async for techstack in techstack_collection.find():
-        techstacks_name.append(techstack_helper_name(techstack))
-    print(techstacks_name)
-    return techstacks_name
+        techstacks_important_info.append(techstack_helper_important_info(techstack))
+    return techstacks_important_info
 
 print(techstack_collection)
