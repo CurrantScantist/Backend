@@ -24,10 +24,7 @@ def test_mongoDB_connection_correct():
 
     check = False
     load_dotenv()
-    PASSWORD=os.getenv('PASSWORD')
-    USERNAME=os.getenv('NAME')
-    CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
-    print(CONNECTION_STRING)
+    CONNECTION_STRING=os.getenv('CONNECTION_STRING')
     # Connecting to MongoDB and getting the database test_db with the collection name repositories
     try:
         database = connect.DatabaseConnection(CONNECTION_STRING)
@@ -52,39 +49,33 @@ def test_mongoDB_connection_fail():
         print(e)
     assert check, "There should be an issue in connection with MongoDB for authentication"
 
-# Positive test cases for techstack/detailed endpoint
-def test_endpoint_techstack_detailed_status_code():
-
-    response = client.get("/techstack/detailed")
-    assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/detailed"
-
-def test_endpoint_techstack_detailed_json_format():
+def test_endpoint_release_detailed_json_format():
 
     check = False
-    response = client.get("/techstack/detailed")
+    response = client.get("/release/{name_owner}")
     try:
         responses = response.json()
         check = True
     except ValueError as valueerror:
         print(valueerror)
 
-    assert check, "API endpoint `techstack/detailed` is not responsding in JSON format"
+    assert check, "API endpoint `/release/{name_owner}` is not responsding in JSON format"
 
 
-def test_endpoint_techstack_detailed_performance_sanity():
+def test_endpoint_release_detailed_performance_sanity():
 
     # time is in nanosecond (since the epoch: unix time)
     maximum_tolerance_time = 1.0
     t0 = time.time()
-    response = client.get("/techstack/detailed")
+    response = client.get("/release/{name_owner}")
     t1 = time.time()
 
     total = t1 - t0
     print(total)
-    assert total < maximum_tolerance_time, "API endpoint `techstack/detailed` is crossing performance threshold"
+    assert total < maximum_tolerance_time, "API endpoint `/release/{name_owner}` is crossing performance threshold"
 
-# Negative test for techstack/detailed endpoint
-def test_endpoint_techstack_detailed_wrong_link():
+# Negative test for /release/{name_owner} endpoint
+def test_endpoint_release_detailed_wrong_link():
 
-    response = client.get("/techstac/detailed")
-    assert  response.status_code == 404, "There supposed to error in the endpoint link: `techstack/detailed`"   
+    response = client.get("/releae/{name_owner}")
+    assert  response.status_code == 404, "There supposed to error in the endpoint link: `/release/{name_owner}'"   

@@ -27,5 +27,8 @@ jobs:
     
         env:
             CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+            PASSWORD: ${{ secrets.PASSWORD }}
+            NAME: ${{ secrets.NAME }}
         run: |
           pytest test/teckstack_test.py
+          pytest test/techstack_metadata_test.py
