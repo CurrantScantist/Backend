@@ -98,3 +98,4 @@ async def retrieve_techstack_important_info() -> dict:
         techstacks_important_info.append(techstack_helper_important_info(techstack))
     return techstacks_important_info
 
+print(techstack_collection)

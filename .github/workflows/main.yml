@@ -29,3 +29,4 @@ jobs:
             CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
         run: |
           pytest test/teckstack_test.py
+          pytest test/techstack_metadata_test.py
