@@ -38,7 +38,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with: 
             key: ${{ secrets.SSH_KEY }}
-            known_hosts: ${{ secrets.KNOWN_HOST }}
+            known_hosts: ${{ secrets.SSH_KNOWN_HOST }}
       - run: |
           git remote add deploy-production-backend ssh://monash@119.8.181.73/home/monash/git_dirs/Backend.git
           git push deploy-production-backend main
