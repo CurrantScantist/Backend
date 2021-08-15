@@ -35,10 +35,11 @@ jobs:
           pytest test/techstack_metadata_test.py
 
       - name: Deploying to Production
-        uses: shimataro/ssh-key-action@v2
-        with: 
-            key: ${{ secrets.SSH_KEY }}
-            known_hosts: "Placeholder"
-      - run: |
-          git remote add deploy-production-backend ssh://monash@119.8.181.73/home/monash/git_dirs/Backend.git
-          git push deploy-production-backend main
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_KNOWN_HOST }}
+          username: "monash"
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            whoami
+            ls -al
