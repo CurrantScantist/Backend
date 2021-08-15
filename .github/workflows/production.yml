@@ -35,11 +35,11 @@ jobs:
           pytest test/techstack_metadata_test.py
 
       - name: Deploying to Production
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@master 
         with:
-          host: ${{ secrets.SSH_KNOWN_HOST }}
-          username: "monash"
+          host: 119.8.181.73
+          username: monash
           key: ${{ secrets.SSH_KEY }}
-          script: |
-            whoami
-            ls -al
+          port: 22
+          script:
+            ls
