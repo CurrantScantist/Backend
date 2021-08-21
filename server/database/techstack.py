@@ -1,15 +1,17 @@
-from server.database.connect import DatabaseConnection
 import os
+
 from dotenv import load_dotenv
+
+from server.database.connect import DatabaseConnection
 
 """
 Retrieve techstack and techstack data from the mongodb database
 """
 # Connecting to MongoDB and getting the database test_db with the collection name repositories
 load_dotenv()
-PASSWORD=os.getenv('PASSWORD')
-USERNAME=os.getenv('NAME')
-CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
+PASSWORD = os.getenv('PASSWORD')
+USERNAME = os.getenv('NAME')
+CONNECTION_STRING = f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
 database = DatabaseConnection(CONNECTION_STRING)
 database.connection_to_db("test_db")
 techstack_collection = database.database_name.get_collection("repositories")
@@ -48,6 +50,8 @@ def techstack_helper(techstack) -> dict:
         "languages": techstack["languages"],
         "topics": techstack["topics"],
     }
+
+
 def techstack_helper_important_info(techstack) -> dict:
     '''
     Helps retrieve only id, name, and owner of a techstack in dictionary format.
@@ -63,7 +67,8 @@ def techstack_helper_important_info(techstack) -> dict:
         "forks": techstack["forks"],
         # "releases": techstack["releases"],
     }
-    
+
+
 async def retrieve_techstacks():
     '''
     Retrieve all unique techstacks in the database
@@ -75,7 +80,7 @@ async def retrieve_techstacks():
     return techstacks
 
 
-async def retrieve_techstack(name: str, owner:str) -> dict:
+async def retrieve_techstack(name: str, owner: str) -> dict:
     '''
     Retrieve a specific techstack and its metadata, from the database with matching name and owner
     :param name: name attribute of the techstack
@@ -93,10 +98,11 @@ async def retrieve_techstack_important_info() -> dict:
     :return: Call retrieve_techstack_important_info() on the given techstack, which returns its techstack id, name, 
     owner and imortant information.
     '''
-    
+
     techstacks_important_info = []
     async for techstack in techstack_collection.find():
         techstacks_important_info.append(techstack_helper_important_info(techstack))
     return techstacks_important_info
+
 
 print(techstack_collection)
