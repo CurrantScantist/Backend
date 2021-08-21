@@ -10,7 +10,6 @@ release_collection = database.database_name.get_collection("releases")
 
 
 # helpers
-
 def release_helper(release) -> dict:
     """
     Helps retrieve_release return release metadata in dictionary form.
@@ -28,14 +27,13 @@ def release_helper(release) -> dict:
 
 
 # Retrieve all releases for name and owner
-async def retrieve_releases(name: str, owner: str) -> dict:
-    '''
+async def retrieve_releases(name: str, owner: str) -> list[dict]:
+    """
     Retrieve all releases and its metadata, from the database with matching name and owner
     :param name: name attribute of the release's techstack
     :param owner: owner attribute of the release's techstack
     :return: Call release_helper() on the given release, which returns its respective metadata
-    '''
-
+    """
     releases = []
     async for release in release_collection.find({"name": name, "owner": owner}):
         releases.insert(0, release_helper(release))
