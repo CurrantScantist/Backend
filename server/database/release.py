@@ -1,16 +1,10 @@
-import os
-
-from dotenv import load_dotenv
-
 from server.database.connect import DatabaseConnection
 
 """
 Retrieve release and release data from the mongodb database
 """
 # Connecting to MongoDB and getting the database test_db with the collection name releases
-load_dotenv()
-CONNECTION_STRING = os.getenv('CONNECTION_STRING')
-database = DatabaseConnection(CONNECTION_STRING)
+database = DatabaseConnection()
 database.connection_to_db("test_db")
 release_collection = database.database_name.get_collection("releases")
 
