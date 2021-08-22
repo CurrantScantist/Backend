@@ -58,7 +58,18 @@ def techstack_helper_important_info(techstack) -> dict:
         "topics": techstack["topics"],
         "forks": techstack["forks"],
     }
-
+def techstack_helper_commit_data(techstack) -> dict:
+    """
+    Helps retrieve only id, name, owner, and commit data of a techstack in dictionary format.
+    :param techstack: techstack object from database
+    :return: given techstack's id, name and owner.
+    """
+    return {
+        "id": str(techstack["_id"]),
+        "name": techstack["name"],
+        "owner": techstack["owner"],
+        "commits_per_author": techstack["commits_per_author"],
+    }
 
 async def retrieve_techstacks():
     """
@@ -79,11 +90,12 @@ async def retrieve_techstack(name: str, owner: str) -> dict:
     :return: Call techstack_helper() on the given techstack, which returns its respective metadata
     """
     techstack = await techstack_collection.find_one({"name": name, "owner": owner})
+    print(techstack)
     if techstack:
         return techstack_helper(techstack)
 
 
-async def retrieve_techstack_important_info() -> list[dict]:
+async def retrieve_techstack_important_info():
     """
     Retrieve all techstack repo detail with few information (Id, name and owner)
     :return: Call retrieve_techstack_important_info() on the given techstack, which returns its techstack id, name,
@@ -96,5 +108,6 @@ async def retrieve_techstack_important_info() -> list[dict]:
 
 
 async def retrieve_techstack_commit_data(name, owner) -> dict:
-    data = await techstack_collection.find_one({"name": name, "owner": owner}, {"commit_data": 1})
-    return data
+    data = await techstack_collection.find_one({"name": name, "owner": owner})
+    if data:
+        return techstack_helper_commit_data(data)

@@ -27,7 +27,7 @@ def release_helper(release) -> dict:
 
 
 # Retrieve all releases for name and owner
-async def retrieve_releases(name: str, owner: str) -> list[dict]:
+async def retrieve_releases(name: str, owner: str):
     """
     Retrieve all releases and its metadata, from the database with matching name and owner
     :param name: name attribute of the release's techstack

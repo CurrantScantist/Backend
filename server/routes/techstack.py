@@ -41,22 +41,22 @@ async def get_techstacks():
     return ResponseModel(techstacks, "Empty list returned")
 
 
-# @router.get("/{name_owner}", response_description="Techstack data retrieved")
-# async def get_techstack_data(name, owner):
-#     '''
-#     Once the techstack name and owner name is provided, starts the process of retrieving the specified techstack data
-#     :param name: Endpoint which asks for techstack name
-#     :param owner: Endpoint which asks for techstack owner name
-#     :return: response model that indicates techstack retrieval success or failure
-#     '''
-#     techstack = await retrieve_techstack(name,owner)
-#     print("shouldn't be here")
-#     if techstack:
-#         return ResponseModel(techstack, "Techstack data retrieved successfully")
-#     return ErrorResponseModel("An error occurred.", 404, "Techstack doesn't exist.")
+@router.get("/{name_owner}", response_description="Techstack data retrieved")
+async def get_techstack_data(name, owner):
+    '''
+    Once the techstack name and owner name is provided, starts the process of retrieving the specified techstack data
+    :param name: Endpoint which asks for techstack name
+    :param owner: Endpoint which asks for techstack owner name
+    :return: response model that indicates techstack retrieval success or failure
+    '''
+    techstack = await retrieve_techstack(name,owner)
+    print("shouldn't be here")
+    if techstack:
+        return ResponseModel(techstack, "Techstack data retrieved successfully")
+    return ErrorResponseModel("An error occurred.", 404, "Techstack doesn't exist.")
 
 
-@router.get("/commit_data", response_description="Techstack commit and contributor data retrieved")
+@router.get("/commit_data/{name_owner}", response_description="Techstack commit and contributor data retrieved")
 async def get_techstack_commit_data(name, owner):
     '''
     Once the techstack name and owner name is provided, starts the process of retrieving the specified techstack data
@@ -64,8 +64,7 @@ async def get_techstack_commit_data(name, owner):
     :param owner: Endpoint which asks for techstack owner name
     :return: response model that indicates techstack retrieval success or failure
     '''
-    techstack = await retrieve_techstack_commit_data(name,owner)
-    print(techstack)
+    techstack = await retrieve_techstack_commit_data(name, owner)
     if techstack:
         return ResponseModel(techstack, "Techstack data retrieved successfully")
     return ErrorResponseModel("An error occurred.", 404, "Techstack doesn't exist.")
