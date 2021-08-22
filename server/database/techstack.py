@@ -1,4 +1,5 @@
 from server.database.connect import DatabaseConnection
+import logging
 
 """
 Retrieve techstack and techstack data from the mongodb database
@@ -92,3 +93,8 @@ async def retrieve_techstack_important_info() -> list[dict]:
     async for techstack in techstack_collection.find():
         techstacks_important_info.append(techstack_helper_important_info(techstack))
     return techstacks_important_info
+
+
+async def retrieve_techstack_commit_data(name, owner) -> dict:
+    data = await techstack_collection.find_one({"name": name, "owner": owner}, {"commit_data": 1})
+    return data
