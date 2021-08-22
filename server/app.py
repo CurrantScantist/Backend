@@ -22,4 +22,3 @@ app.include_router(ReleaseRouter, tags=["Release"], prefix="/release")
 @app.get("/", tags=["Root"])
 async def read_root():
     return {"message": "Welcome to this fantastic app!"}
-
