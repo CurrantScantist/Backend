@@ -27,7 +27,7 @@ def techstack_helper(techstack: dict) -> dict:
     techstack["id"] =str(techstack["_id"])
     del techstack["_id"]
     return techstack
-    
+
 def techstack_helper_important_info(techstack) -> dict:
     '''
     Helps retrieve only id, name, and owner of a techstack in dictionary format.
@@ -51,8 +51,6 @@ async def retrieve_techstacks():
     '''
     techstacks = []
     async for techstack in techstack_collection.find():
-        print(type(techstack))
-        print(techstack)
         techstacks.append(techstack_helper(techstack))
     return techstacks
 
@@ -80,5 +78,3 @@ async def retrieve_techstack_important_info() -> dict:
     async for techstack in techstack_collection.find():
         techstacks_important_info.append(techstack_helper_important_info(techstack))
     return techstacks_important_info
-
-print(techstack_collection)
