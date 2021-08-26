@@ -1,6 +1,7 @@
 from server.database.connect import DatabaseConnection
 import os
 from dotenv import load_dotenv
+import json
 
 """
 Retrieve techstack and techstack data from the mongodb database
@@ -17,37 +18,16 @@ techstack_collection = database.database_name.get_collection("repositories")
 
 # helpers
 
-def techstack_helper(techstack) -> dict:
+def techstack_helper(techstack: dict) -> dict:
     """
     Helps retrieve_techstack return techstack metadata in dictionary form.
     :param techstack: techstack object from database
     :return: techstack metadata in an ordered dictionary format
     """
-    return {
-        "id": str(techstack["_id"]),
-        # "releases": techstack["releases"],
-        "name": techstack["name"],
-        "owner": techstack["owner"],
-        "description": techstack["description"],
-        "forks": techstack["forks"],
-        "forks_count": techstack["forks_count"],
-        "language": techstack["language"],
-        "stargazers_count": techstack["stargazers_count"],
-        "watchers_count": techstack["watchers_count"],
-        "watchers": techstack["watchers"],
-        "size": techstack["size"],
-        "default_branch": techstack["default_branch"],
-        "open_issues_count": techstack["open_issues_count"],
-        "open_issues": techstack["open_issues"],
-        "has_issues": techstack["has_issues"],
-        "archived": techstack["archived"],
-        "disabled": techstack["disabled"],
-        "pushed_at": techstack["pushed_at"],
-        "created_at": techstack["created_at"],
-        "updated_at": techstack["updated_at"],
-        "languages": techstack["languages"],
-        "topics": techstack["topics"],
-    }
+    techstack["id"] =str(techstack["_id"])
+    del techstack["_id"]
+    return techstack
+    
 def techstack_helper_important_info(techstack) -> dict:
     '''
     Helps retrieve only id, name, and owner of a techstack in dictionary format.
@@ -71,6 +51,8 @@ async def retrieve_techstacks():
     '''
     techstacks = []
     async for techstack in techstack_collection.find():
+        print(type(techstack))
+        print(techstack)
         techstacks.append(techstack_helper(techstack))
     return techstacks
 
