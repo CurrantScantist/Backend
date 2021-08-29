@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
-
+from fastapi import HTTPException
 from server.database.techstack import (
     retrieve_techstack,
     retrieve_techstacks,
     retrieve_techstack_important_info,
+    retrieve_techstack_contribution_data
 
 )
 from server.models.techstack import (
@@ -49,10 +50,26 @@ async def get_techstack_data(name, owner):
     :param owner: Endpoint which asks for techstack owner name
     :return: response model that indicates techstack retrieval success or failure
     '''
-    techstack = await retrieve_techstack(name,owner)
+    techstack = await retrieve_techstack(name, owner)
     if techstack:
         return ResponseModel(techstack, "Techstack data retrieved successfully")
     return ErrorResponseModel("An error occurred.", 404, "Techstack doesn't exist.")
+
+
+@router.get("/contribution/{name_owner}", response_description="Techstack data retrieved")
+async def get_techstack_data(name, owner):
+    '''
+    Once the techstack name and owner name is provided, starts the process of retrieving the specified techstack data
+    :param name: Endpoint which asks for techstack name
+    :param owner: Endpoint which asks for techstack owner name
+    :return: response model that indicates techstack retrieval success or failure
+    '''
+    techstack = await retrieve_techstack_contribution_data(name,owner)
+   
+    if techstack:
+        return ResponseModel(techstack, "Techstack data retrieved successfully")
+    raise HTTPException(status_code=404, detail="Item not found")
+
 
 
 

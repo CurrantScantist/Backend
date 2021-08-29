@@ -88,3 +88,44 @@ def test_endpoint_techstack_detailed_wrong_link():
 
     response = client.get("/techstac/detailed")
     assert  response.status_code == 404, "There supposed to error in the endpoint link: `techstack/detailed`"   
+
+
+# Testing contribution endpoint 
+# Positive test cases for techstack/contribtution endpoint
+def test_endpoint_techstack_contribution_status_code():
+
+    response = client.get("/techstack/contribution/{name_owner}?name=bottle&owner=bottlepy")
+    print(response)
+    assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/contribution"
+
+def test_endpoint_techstack_contribution_json_format():
+
+    check = False
+    response = client.get("/techstack/contribution/{name_owner}?name=bottle&owner=bottlepy")
+    try:
+        responses = response.json()
+        check = True
+    except ValueError as valueerror:
+        print(valueerror)
+
+    assert check, "API endpoint `techstack/detailed` is not responsding in JSON format"
+
+def test_endpoint_techstack_contribution_performance_sanity():
+
+    # time is in nanosecond (since the epoch: unix time)
+    maximum_tolerance_time = 1.0
+    t0 = time.time()
+    response = client.get("/techstack/contribution/{name_owner}?name=bottle&owner=bottlepy")
+    t1 = time.time()
+
+    total = t1 - t0
+    print(total)
+    assert total < maximum_tolerance_time, "API endpoint `techstack/detailed` is crossing performance threshold"
+
+# Negative test for techstack/detailed endpoint
+def test_endpoint_techstack_contribution_wrong_parameter():
+
+    response = client.get("/techstack/contribution/{name_owner}?name=bott&owner=bottlepy")
+    print(response.status_code)
+    assert response.status_code == 404, "There supposed to error in the endpoint link: `techstack/contribution` because techstack does not exist in the database"
+
