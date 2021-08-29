@@ -78,3 +78,18 @@ async def retrieve_techstack_important_info() -> dict:
     async for techstack in techstack_collection.find():
         techstacks_important_info.append(techstack_helper_important_info(techstack))
     return techstacks_important_info
+
+
+
+async def retrieve_techstack_contribution_data(name: str, owner:str) -> dict:
+    '''
+    Retrieve all techstack repo contribution and collaboration detail with few information (Id, name and owner)
+    :return: Call retrieve_techstack_contribution_data() on the given techstack, which returns its techstack id, name, 
+    owner and commit/ contribution data in object format.
+    '''
+    
+    techstack = await techstack_collection.find_one({"name": name, "owner": owner}, {"_id": 1, "name": 1, "owner": 1, "commits_per_author": 1 })
+    if techstack:
+        return techstack_helper(techstack)
+    else: 
+        return None
