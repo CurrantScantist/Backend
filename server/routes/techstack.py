@@ -5,8 +5,8 @@ from server.database.techstack import (
     retrieve_techstack,
     retrieve_techstacks,
     retrieve_techstack_important_info,
-    retrieve_techstack_contribution_data
-
+    retrieve_techstack_contribution_data,
+    retrieve_similar_repository_data
 )
 from server.models.techstack import (
     ErrorResponseModel,
@@ -68,6 +68,15 @@ async def get_techstack_data(name, owner):
    
     if techstack:
         return ResponseModel(techstack, "Techstack data retrieved successfully")
+    raise HTTPException(status_code=404, detail="Item not found")
+
+
+@router.get("/similar/{name_owner}", response_description="Similar repository data retrieved")
+async def get_similar_repository_data(name, owner):
+    repos = await retrieve_similar_repository_data(name, owner)
+
+    if repos:
+        return ResponseModel(repos, "Similar repository data retrieved")
     raise HTTPException(status_code=404, detail="Item not found")
 
 

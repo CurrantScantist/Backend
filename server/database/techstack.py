@@ -93,3 +93,22 @@ async def retrieve_techstack_contribution_data(name: str, owner:str) -> dict:
         return techstack_helper(techstack)
     else: 
         return None
+
+
+async def retrieve_similar_repository_data(name: str, owner: str) -> list:
+    topics = await techstack_collection.find_one({"name": name, "owner": owner}, {"topics": 1, "_id": 0})
+    try:
+        topics = topics["topics"]
+    except KeyError:
+        return []
+
+    repos = []
+
+    similar_repos = techstack_collection.find({"topics": {"$in": topics}},
+                                              {"name": 1, "owner": 1, "_id": 0,
+                                               "num_components": 1, "num_vulnerabilities": 1, "size": 1})\
+        .sort([('stargazers_count', -1)]).limit(5)
+    async for repo in similar_repos:
+        repos.append(repo)
+
+    return repos
