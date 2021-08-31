@@ -73,6 +73,16 @@ async def get_techstack_data(name, owner):
 
 @router.get("/similar/{name_owner}", response_description="Similar repository data retrieved")
 async def get_similar_repository_data(name, owner):
+    """
+    Retrieves up to 5 repositories that are similar to an inputted repository (the inputted repository is guaranteed
+    to be one of the 5 repositories). For repositories that have github topics, two repositories are considered similar
+    if they have at least one tag in common. For repositories that don't have github topics, repositories that share the
+    same predominant language are considered similar. In the case when there are more than 4 repositories that are
+    similar to the inputted repository, the most popular 4 are returned (measured based on the stargazers_count).
+    :param name: the name of the repository
+    :param owner: the owner of the repository
+    :return: the response model for successful requests otherwise a HTTPException is raised
+    """
     repos = await retrieve_similar_repository_data(name, owner)
 
     if repos:
