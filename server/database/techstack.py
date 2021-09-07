@@ -110,6 +110,8 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     input_repo = await techstack_collection.find_one({"name": name, "owner": owner},
                                                      {"topics": 1, "_id": 0, "num_components": 1,
                                                       "num_vulnerabilities": 1, "size": 1, "language": 1})
+    if input_repo is None:
+        return []
     try:
         original_topics = input_repo["topics"]
         topics = original_topics.copy()
