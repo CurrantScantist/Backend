@@ -87,7 +87,7 @@ async def get_similar_repository_data(name, owner):
 
     if repos:
         return ResponseModel(repos, "Similar repository data retrieved")
-    raise HTTPException(status_code=404, detail="Item not found")
+    raise HTTPException(status_code=404, detail="Repository not found")
 
 
 
