@@ -49,6 +49,7 @@ async def retrieve_techstacks():
     Retrieve all unique techstacks in the database
     :return: all techstacks present in the database
     '''
+    
     techstacks = []
     async for techstack in techstack_collection.find():
         techstacks.append(techstack_helper(techstack))
