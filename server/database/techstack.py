@@ -10,7 +10,7 @@ Retrieve techstack and techstack data from the mongodb database
 load_dotenv()
 PASSWORD=os.getenv('PASSWORD')
 USERNAME=os.getenv('NAME')
-CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
+CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
 database = DatabaseConnection(CONNECTION_STRING)
 database.connection_to_db("test_db")
 techstack_collection = database.database_name.get_collection("repositories")
@@ -93,3 +93,75 @@ async def retrieve_techstack_contribution_data(name: str, owner:str) -> dict:
         return techstack_helper(techstack)
     else: 
         return None
+
+
+async def retrieve_similar_repository_data(name: str, owner: str, num_repositories=5) -> list:
+    """
+    Retrieves up to 5 repositories that are similar to an inputted repository (the inputted repository is guaranteed
+    to be one of the 5 repositories). For repositories that have github topics, two repositories are considered similar
+    if they have at least one tag in common. For repositories that don't have github topics, repositories that share the
+    same predominant language are considered similar. In the case when there are more than 4 repositories that are
+    similar to the inputted repository, the most popular 4 are returned (measured based on the stargazers_count).
+    :param name: the name of the repository
+    :param owner: the owner of the repository
+    :param num_repositories: the maximum number of repositories to include in the response
+    :return: the response model for successful requests otherwise a HTTPException is raised
+    """
+    input_repo = await techstack_collection.find_one({"name": name, "owner": owner},
+                                                     {"topics": 1, "_id": 0, "num_components": 1,
+                                                      "num_vulnerabilities": 1, "size": 1, "language": 1})
+    if input_repo is None:
+        return []
+    try:
+        original_topics = input_repo["topics"]
+        topics = original_topics.copy()
+        topics.remove(input_repo["language"].lower())
+    except KeyError:
+        return []
+
+    repo = {"name": name, "owner": owner}
+    original_topics_set = set(original_topics)
+    repo.update(input_repo)
+    repo["common_topics"] = repo.pop("topics")
+    repo["common_language"] = repo.pop("language")
+    repos = [repo]
+
+    async def process_repos(similar_repos):
+        """
+        Local function to process the pymongo cursor for repositories
+        """
+        processed_repos = []
+        async for repo in similar_repos:
+            repo.update({"common_topics": original_topics_set.intersection(set(repo["topics"]))})
+            repo["common_language"] = None
+            if repo["language"] == input_repo["language"]:
+                repo["common_language"] = repo["language"]
+
+            repo.pop("topics")
+            processed_repos.append(repo)
+        return processed_repos
+
+    if len(topics) != 0:
+        similar_repos = techstack_collection.find({"name": {"$ne": name}, "topics": {"$in": topics}},
+                                                  {"name": 1, "owner": 1, "_id": 0,
+                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1, "topics": 1,
+                                                   "language": 1}) \
+            .sort([('stargazers_count', -1)]).limit(num_repositories - 1)
+
+        repos += await process_repos(similar_repos)
+
+    # if not enough repositories were found using github topics, find repos that have the same main language
+    num_repositories_to_find = num_repositories - len(repos)
+    if num_repositories_to_find == 0:
+        return repos
+
+    similar_language_repos = techstack_collection.find({"name": {"$ne": name}, "language": input_repo["language"]},
+                                                       {"name": 1, "owner": 1, "_id": 0,
+                                                        "num_components": 1, "num_vulnerabilities": 1, "size": 1,
+                                                        "topics": 1,
+                                                        "language": 1}) \
+        .sort([('stargazers_count', -1)]).limit(num_repositories_to_find)
+
+    repos += await process_repos(similar_language_repos)
+
+    return repos
