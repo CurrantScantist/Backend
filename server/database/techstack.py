@@ -104,7 +104,7 @@ async def retrieve_top_ten_techstacks() -> dict:
     :return: top 10 techstacks and their full metadata
     """
     techstacks = []
-    async for techstack in techstack_collection.find():
-        techstacks.append(techstack_helper(techstack))
-    techstacks = sorted(techstacks, key=lambda k: k['stargazers_count'], reverse=True)[:10]
+    async for techstack in techstack_collection.find({},{"_id":0}).sort([('stargazers_count', -1)]).limit(10):
+        techstacks.append(techstack)
+
     return techstacks
