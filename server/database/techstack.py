@@ -99,6 +99,10 @@ async def retrieve_techstack_contribution_data(name: str, owner: str) -> dict:
 
 
 async def retrieve_top_ten_techstacks() -> dict:
+    """
+    Retrieve the top ten techstacks from the database based on highest to lowest stargazer count
+    :return: top 10 techstacks and their full metadata
+    """
     techstacks = []
     async for techstack in techstack_collection.find():
         techstacks.append(techstack_helper(techstack))
