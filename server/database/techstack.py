@@ -8,9 +8,11 @@ Retrieve techstack and techstack data from the mongodb database
 """
 # Connecting to MongoDB and getting the database test_db with the collection name repositories
 load_dotenv()
-PASSWORD=os.getenv('PASSWORD')
-USERNAME=os.getenv('NAME')
-CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
+PASSWORD = os.getenv('PASSWORD')
+USERNAME = os.getenv('NAME')
+CONNECTION_STRING = f"mongodb+srv://{USERNAME}:" \
+                    f"{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority&ssl=true" \
+                    f"&ssl_cert_reqs=CERT_NONE"
 database = DatabaseConnection(CONNECTION_STRING)
 database.connection_to_db("test_db")
 techstack_collection = database.database_name.get_collection("repositories")
@@ -24,9 +26,10 @@ def techstack_helper(techstack: dict) -> dict:
     :param techstack: techstack object from database
     :return: techstack metadata in an ordered dictionary format
     """
-    techstack["id"] =str(techstack["_id"])
+    techstack["id"] = str(techstack["_id"])
     del techstack["_id"]
     return techstack
+
 
 def techstack_helper_important_info(techstack) -> dict:
     '''
@@ -43,7 +46,8 @@ def techstack_helper_important_info(techstack) -> dict:
         "forks": techstack["forks"],
         # "releases": techstack["releases"],
     }
-    
+
+
 async def retrieve_techstacks():
     '''
     Retrieve all unique techstacks in the database
@@ -55,7 +59,7 @@ async def retrieve_techstacks():
     return techstacks
 
 
-async def retrieve_techstack(name: str, owner:str) -> dict:
+async def retrieve_techstack(name: str, owner: str) -> dict:
     '''
     Retrieve a specific techstack and its metadata, from the database with matching name and owner
     :param name: name attribute of the techstack
@@ -73,25 +77,25 @@ async def retrieve_techstack_important_info() -> dict:
     :return: Call retrieve_techstack_important_info() on the given techstack, which returns its techstack id, name, 
     owner and imortant information.
     '''
-    
+
     techstacks_important_info = []
     async for techstack in techstack_collection.find():
         techstacks_important_info.append(techstack_helper_important_info(techstack))
     return techstacks_important_info
 
 
-
-async def retrieve_techstack_contribution_data(name: str, owner:str) -> dict:
+async def retrieve_techstack_contribution_data(name: str, owner: str) -> dict:
     '''
     Retrieve all techstack repo contribution and collaboration detail with few information (Id, name and owner)
     :return: Call retrieve_techstack_contribution_data() on the given techstack, which returns its techstack id, name, 
     owner and commit/ contribution data in object format.
     '''
-    
-    techstack = await techstack_collection.find_one({"name": name, "owner": owner}, {"_id": 1, "name": 1, "owner": 1, "commits_per_author": 1 })
+
+    techstack = await techstack_collection.find_one({"name": name, "owner": owner},
+                                                    {"_id": 1, "name": 1, "owner": 1, "commits_per_author": 1})
     if techstack:
         return techstack_helper(techstack)
-    else: 
+    else:
         return None
 
 
@@ -144,7 +148,8 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     if len(topics) != 0:
         similar_repos = techstack_collection.find({"name": {"$ne": name}, "topics": {"$in": topics}},
                                                   {"name": 1, "owner": 1, "_id": 0,
-                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1, "topics": 1,
+                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1,
+                                                   "topics": 1,
                                                    "language": 1}) \
             .sort([('stargazers_count', -1)]).limit(num_repositories - 1)
 
@@ -165,3 +170,9 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     repos += await process_repos(similar_language_repos)
 
     return repos
+
+
+async def retrieve_nodelink_data(name: str, owner: str) -> list:
+    techstack_nodelink_info = await techstack_collection.find_one({"name": name, "owner": owner},
+                                                                  {"_id": 0, "name": 1, "owner": 1, "nodelink_data": 1})
+    return techstack_nodelink_info
