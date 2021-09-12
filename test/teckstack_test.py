@@ -83,12 +83,36 @@ def test_endpoint_techstack_detailed_performance_sanity():
     print(total)
     assert total < maximum_tolerance_time, "API endpoint `techstack/detailed` is crossing performance threshold"
 
-# Negative test for techstack/detailed endpoint
-def test_endpoint_techstack_detailed_wrong_link():
+# Positive test cases for /nodelink_data endpoint
+# def test_endpoint_nodelink_data_status_code():
+#
+#     response = client.get("/techstack/nodelink_data")
+#     assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/nodelink_data"
 
-    response = client.get("/techstac/detailed")
-    assert  response.status_code == 404, "There supposed to error in the endpoint link: `techstack/detailed`"   
+def test_endpoint_nodelink_data_json_format():
 
+    check = False
+    response = client.get("/techstack/nodelink_data")
+    try:
+        responses = response.json()
+        check = True
+    except ValueError as valueerror:
+        print(valueerror)
+
+    assert check, "API endpoint `techstack/nodelink_data` is not responding in JSON format"
+
+
+def test_endpoint_nodelink_data_performance_sanity():
+
+    # time is in nanosecond (since the epoch: unix time)
+    maximum_tolerance_time = 1.0
+    t0 = time.time()
+    response = client.get("/techstack/nodelink_data")
+    t1 = time.time()
+
+    total = t1 - t0
+    print(total)
+    assert total < maximum_tolerance_time, "API endpoint `techstack/nodelink_data` is crossing performance threshold"
 
 # Testing contribution endpoint 
 # Positive test cases for techstack/contribtution endpoint
