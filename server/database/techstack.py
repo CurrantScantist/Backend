@@ -49,6 +49,7 @@ async def retrieve_techstacks():
     Retrieve all unique techstacks in the database
     :return: all techstacks present in the database
     '''
+    
     techstacks = []
     async for techstack in techstack_collection.find():
         techstacks.append(techstack_helper(techstack))
@@ -75,8 +76,8 @@ async def retrieve_techstack_important_info() -> dict:
     '''
     
     techstacks_important_info = []
-    async for techstack in techstack_collection.find():
-        techstacks_important_info.append(techstack_helper_important_info(techstack))
+    async for techstack in techstack_collection.find({}, {"_id": 1, "name": 1, "owner": 1, "stargazers_count": 1, "topics":1, "forks": 1}):
+        techstacks_important_info.append(techstack_helper(techstack))
     return techstacks_important_info
 
 
