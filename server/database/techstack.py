@@ -107,8 +107,6 @@ async def retrieve_top_ten_techstacks() -> dict:
         techstacks.append(techstack)
 
     return techstacks
-    else: 
-        return None
 
 
 async def retrieve_similar_repository_data(name: str, owner: str, num_repositories=5) -> list:
