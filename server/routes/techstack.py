@@ -6,6 +6,7 @@ from server.database.techstack import (
     retrieve_techstacks,
     retrieve_techstack_important_info,
     retrieve_techstack_contribution_data,
+    retrieve_top_ten_techstacks,
     retrieve_similar_repository_data
 )
 from server.models.techstack import (
@@ -29,14 +30,28 @@ async def get_techstacks():
         return ResponseModel(techstacks, "Techstacks data retrieved successfully")
     return ResponseModel(techstacks, "Empty list returned")
 
-    
+
 @router.get("/list", response_description="Techstacks retrieved")
 async def get_techstacks():
     '''
     Once called, starts the process of retrieving all techstacks, but only accompanied with their id, name and owner.
-    :return: Response Model that gives indication that all techstack retrieval and their id,name and owner metadata, is successful.
+    :return: Response Model that gives indication that all techstack retrieval and their id,name and owner metadata,
+    is successful.
     '''
     techstacks = await retrieve_techstack_important_info()
+    if techstacks:
+        return ResponseModel(techstacks, "Techstacks data retrieved successfully")
+    return ResponseModel(techstacks, "Empty list returned")
+
+
+@router.get("/topten", response_description="Techstack data retrieved")
+async def get_techstacks():
+    '''
+    Once called, starts the process of retrieving top 10 techstacks based on highest to lowest stargazer count.
+    :return: Response Model that gives indication that top ten techstack retrieval and their metadata,
+    is successful.
+    '''
+    techstacks = await retrieve_top_ten_techstacks()
     if techstacks:
         return ResponseModel(techstacks, "Techstacks data retrieved successfully")
     return ResponseModel(techstacks, "Empty list returned")
@@ -64,8 +79,8 @@ async def get_techstack_data(name, owner):
     :param owner: Endpoint which asks for techstack owner name
     :return: response model that indicates techstack retrieval success or failure
     '''
-    techstack = await retrieve_techstack_contribution_data(name,owner)
-   
+    techstack = await retrieve_techstack_contribution_data(name, owner)
+
     if techstack:
         return ResponseModel(techstack, "Techstack data retrieved successfully")
     raise HTTPException(status_code=404, detail="Item not found")

@@ -19,14 +19,15 @@ from test.fail_secrets import CONNECTION_STRING_FAIL
 
 client = TestClient(app)
 
+
 # Positive Testing for Database connection
 def test_mongoDB_connection_correct():
-
     check = False
     load_dotenv()
-    PASSWORD=os.getenv('PASSWORD')
-    USERNAME=os.getenv('NAME')
-    CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
+    PASSWORD = os.getenv('PASSWORD')
+    USERNAME = os.getenv('NAME')
+    CONNECTION_STRING = f"mongodb+srv://{USERNAME}:" \
+                        f"{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority"
     print(CONNECTION_STRING)
     # Connecting to MongoDB and getting the database test_db with the collection name repositories
     try:
@@ -34,32 +35,32 @@ def test_mongoDB_connection_correct():
         database.client.server_info()
         database.connection_to_db("test_db")
         check = True
-    except Exception as e: 
+    except Exception as e:
         print(e)
     assert check, "There is an issue in connection with MongoDB either in database name or authentication"
 
+
 # Negative Testing for Database connection
 def test_mongoDB_connection_fail():
-
     check = False
     # Connecting to false string MongoDB and getting the database test_db with the collection name repositories
     try:
         database = connect.DatabaseConnection(CONNECTION_STRING_FAIL)
         database.client.server_info()
         database.connection_to_db("test_db")
-    except Exception as e: 
+    except Exception as e:
         check = True
         print(e)
     assert check, "There should be an issue in connection with MongoDB for authentication"
 
+
 # Positive test cases for techstack/detailed endpoint
 def test_endpoint_techstack_detailed_status_code():
-
     response = client.get("/techstack/detailed")
     assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/detailed"
 
-def test_endpoint_techstack_detailed_json_format():
 
+def test_endpoint_techstack_detailed_json_format():
     check = False
     response = client.get("/techstack/detailed")
     try:
@@ -72,7 +73,6 @@ def test_endpoint_techstack_detailed_json_format():
 
 
 def test_endpoint_techstack_detailed_performance_sanity():
-
     # time is in nanosecond (since the epoch: unix time)
     maximum_tolerance_time = 1.0
     t0 = time.time()
@@ -83,23 +83,54 @@ def test_endpoint_techstack_detailed_performance_sanity():
     print(total)
     assert total < maximum_tolerance_time, "API endpoint `techstack/detailed` is crossing performance threshold"
 
+
 # Negative test for techstack/detailed endpoint
 def test_endpoint_techstack_detailed_wrong_link():
-
     response = client.get("/techstac/detailed")
-    assert  response.status_code == 404, "There supposed to error in the endpoint link: `techstack/detailed`"   
+    assert response.status_code == 404, "There supposed to error in the endpoint link: `techstack/detailed`"
+
+
+# Testing topten endpoint
+# Positive test cases for techstack/topten endpoint
+def test_endpoint_techstack_topten_status_code():
+    response = client.get("/techstack/topten")
+    print(response)
+    assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/topten"
+
+
+def test_endpoint_techstack_topten_json_format():
+    check = False
+    response = client.get("/techstack/topten")
+    try:
+        responses = response.json()
+        check = True
+    except ValueError as valueerror:
+        print(valueerror)
+
+    assert check, "API endpoint `techstack/topten` is not responding in JSON format"
+
+
+def test_endpoint_techstack_topten_performance_sanity():
+    # time is in nanosecond (since the epoch: unix time)
+    maximum_tolerance_time = 1.0
+    t0 = time.time()
+    response = client.get("/techstack/topten")
+    t1 = time.time()
+
+    total = t1 - t0
+    print(total)
+    assert total < maximum_tolerance_time, "API endpoint `techstack/topten` is crossing performance threshold"
 
 
 # Testing contribution endpoint 
-# Positive test cases for techstack/contribtution endpoint
+# Positive test cases for techstack/contribution endpoint
 def test_endpoint_techstack_contribution_status_code():
-
     response = client.get("/techstack/contribution/{name_owner}?name=bottle&owner=bottlepy")
     print(response)
     assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/contribution"
 
-def test_endpoint_techstack_contribution_json_format():
 
+def test_endpoint_techstack_contribution_json_format():
     check = False
     response = client.get("/techstack/contribution/{name_owner}?name=bottle&owner=bottlepy")
     try:
@@ -108,10 +139,10 @@ def test_endpoint_techstack_contribution_json_format():
     except ValueError as valueerror:
         print(valueerror)
 
-    assert check, "API endpoint `techstack/detailed` is not responsding in JSON format"
+    assert check, "API endpoint `techstack/detailed` is not responding in JSON format"
+
 
 def test_endpoint_techstack_contribution_performance_sanity():
-
     # time is in nanosecond (since the epoch: unix time)
     maximum_tolerance_time = 1.0
     t0 = time.time()
@@ -122,9 +153,9 @@ def test_endpoint_techstack_contribution_performance_sanity():
     print(total)
     assert total < maximum_tolerance_time, "API endpoint `techstack/detailed` is crossing performance threshold"
 
+
 # Negative test for techstack/detailed endpoint
 def test_endpoint_techstack_contribution_wrong_parameter():
-
     response = client.get("/techstack/contribution/{name_owner}?name=bott&owner=bottlepy")
     print(response.status_code)
     assert response.status_code == 404, "There supposed to error in the endpoint link: `techstack/contribution` because techstack does not exist in the database"
