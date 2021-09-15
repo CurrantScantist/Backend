@@ -29,8 +29,9 @@ def release_helper(release) -> dict:
         "committed_date": release["committed_date"]
     }
 
+
 # Retrieve all releases for name and owner
-async def retrieve_releases(name: str, owner:str) -> dict:
+async def retrieve_releases(name: str, owner: str) -> list[dict]:
     '''
     Retrieve all releases and its metadata, from the database with matching name and owner
     :param name: name attribute of the release's techstack
@@ -39,6 +40,6 @@ async def retrieve_releases(name: str, owner:str) -> dict:
     '''
     
     releases = []
-    async for release in release_collection.find({"name": name, "owner": owner}):
-        releases.insert(0,release_helper(release))
+    async for release in release_collection.find({"name": name, "owner": owner}).sort([('committed_date', 1)]):
+        releases.append(release_helper(release))
     return releases
