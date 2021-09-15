@@ -158,5 +158,15 @@ def test_endpoint_techstack_contribution_performance_sanity():
 def test_endpoint_techstack_contribution_wrong_parameter():
     response = client.get("/techstack/contribution/{name_owner}?name=bott&owner=bottlepy")
     print(response.status_code)
-    assert response.status_code == 404, "There supposed to error in the endpoint link: `techstack/contribution` " \
-                                        "because techstack does not exist in the database"
+    assert response.status_code == 404, "There supposed to error in the endpoint link: `techstack/contribution` because techstack does not exist in the database"
+
+
+def test_endpoint_retrieve_similar_repositories_success():
+    response = client.get("/techstack/similar/{name_owner}?name=tqdm&owner=tqdm")
+    assert response.status_code == 200
+    assert response.json()
+
+
+def test_endpoint_retrieve_similar_repositories_not_found():
+    response = client.get("/techstack/similar/{name_owner}?name=tqd&owner=tqdm")
+    assert response.status_code == 404
