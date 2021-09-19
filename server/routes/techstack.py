@@ -7,7 +7,7 @@ from server.database.techstack import (
     retrieve_techstack_important_info,
     retrieve_techstack_contribution_data,
     retrieve_similar_repository_data,
-    retrieve_techstack_heatmap
+    retrieve_techstack_heatmap,
     retrieve_top_ten_techstacks,
     retrieve_similar_repository_data
 )
