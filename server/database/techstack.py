@@ -180,3 +180,16 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     repos += await process_repos(similar_language_repos)
 
     return repos
+
+
+async def retrieve_techstack_heatmap(name: str, owner: str) -> dict:
+    """
+    Retrieve techstack information for heatmap (No of Commits, Open Issues, Pull Requests)
+    :return: the response model for successful requests having heatmap information otherwise a HTTPException is raised
+    """
+
+    techstack_heatmap_info = await techstack_collection.find_one({"name": name, "owner": owner}, {"_id": 1, "name": 1, "owner": 1, "heatmap_data": 1 })
+    if techstack_heatmap_info:
+        return techstack_helper(techstack_heatmap_info)
+    else: 
+        return None

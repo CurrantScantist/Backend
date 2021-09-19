@@ -6,6 +6,8 @@ from server.database.techstack import (
     retrieve_techstacks,
     retrieve_techstack_important_info,
     retrieve_techstack_contribution_data,
+    retrieve_similar_repository_data,
+    retrieve_techstack_heatmap,
     retrieve_top_ten_techstacks,
     retrieve_similar_repository_data
 )
@@ -103,6 +105,21 @@ async def get_similar_repository_data(name, owner):
     if repos:
         return ResponseModel(repos, "Similar repository data retrieved")
     raise HTTPException(status_code=404, detail="Repository not found")
+
+
+@router.get("/heatmap/{name_owner}", response_description="Heatmap data retrieved")
+async def get_techstack_data(name, owner):
+    '''
+    Once the techstack name and owner name is provided, starts the process of retrieving heatmap data for the techstack
+    :param name: Endpoint which asks for techstack name
+    :param owner: Endpoint which asks for techstack owner name
+    :return: response model that indicates heatmap data retrieval success or failure
+    '''
+    techstack = await retrieve_techstack_heatmap(name,owner)
+   
+    if techstack:
+        return ResponseModel(techstack, "Techstack data retrieved successfully")
+    raise HTTPException(status_code=404, detail="Item not found")
 
 
 

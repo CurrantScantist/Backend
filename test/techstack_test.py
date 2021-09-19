@@ -157,7 +157,6 @@ def test_endpoint_techstack_contribution_performance_sanity():
 # Negative test for techstack/detailed endpoint
 def test_endpoint_techstack_contribution_wrong_parameter():
     response = client.get("/techstack/contribution/{name_owner}?name=bott&owner=bottlepy")
-    print(response.status_code)
     assert response.status_code == 404, "There supposed to error in the endpoint link: `techstack/contribution` because techstack does not exist in the database"
 
 
@@ -170,3 +169,32 @@ def test_endpoint_retrieve_similar_repositories_success():
 def test_endpoint_retrieve_similar_repositories_not_found():
     response = client.get("/techstack/similar/{name_owner}?name=tqd&owner=tqdm")
     assert response.status_code == 404
+
+
+# Testing /Heatmap endpoint
+def test_endpoint_techstack_heatmap_status_code():
+    response = client.get("/techstack/heatmap/{name_owner}?name=vue&owner=vuejs")
+    assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/heatmap"
+
+
+def test_endpoint_techstack_contribution_json_format():
+
+    check = False
+    response = client.get("/techstack/heatmap/{name_owner}?name=vue&owner=vuejs")
+    try:
+        responses = response.json()
+        check = True
+    except ValueError as valueerror:
+        print(valueerror)
+
+    assert check, "API endpoint `techstack/heatmap` is not responsding in JSON format"
+
+def test_endpoint_techstack_contribution_performance_sanity():
+
+    # time is in nanosecond (since the epoch: unix time)
+    maximum_tolerance_time = 1.0
+    t0 = time.time()
+    response = client.get("/techstack/heatmap/{name_owner}?name=vue&owner=vuejs")
+    t1 = time.time()
+    total = t1 - t0
+    assert total < maximum_tolerance_time, "API endpoint `techstack/heatmap` is crossing performance threshold"
