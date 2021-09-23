@@ -22,8 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(TechstackRouter, tags=["Techstack"], prefix="/techstack", dependencies=[Depends(RateLimiter(times=2, seconds=500))])
-app.include_router(ReleaseRouter, tags=["Release"], prefix="/release", dependencies=[Depends(RateLimiter(times=2, seconds=500))])
+app.include_router(TechstackRouter, tags=["Techstack"], prefix="/techstack", dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+app.include_router(ReleaseRouter, tags=["Release"], prefix="/release", dependencies=[Depends(RateLimiter(times=1, seconds=60))])
 # Tags are identifiers used to group routes. Routes with the same tags are grouped into a section on the API documentation.
 
 @app.on_event("startup")
@@ -31,6 +31,6 @@ async def startup():
     redis = await aioredis.from_url("redis://localhost:6379", encoding="utf-8", decode_responses=True)
     await FastAPILimiter.init(redis)
 
-@app.get("/", tags=["Root"], dependencies=[Depends(RateLimiter(times=2, seconds=500))])
+@app.get("/", tags=["Root"], dependencies=[Depends(RateLimiter(times=10, seconds=9))])
 async def read_root(request: Request):
     return {"message": "Welcome to this fantastic app!"}
