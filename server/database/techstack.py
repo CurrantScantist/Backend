@@ -53,6 +53,7 @@ async def retrieve_techstacks():
     Retrieve all unique techstacks in the database
     :return: all techstacks present in the database
     '''
+    
     techstacks = []
     async for techstack in techstack_collection.find():
         techstacks.append(techstack_helper(techstack))
@@ -79,8 +80,8 @@ async def retrieve_techstack_important_info() -> dict:
     '''
 
     techstacks_important_info = []
-    async for techstack in techstack_collection.find():
-        techstacks_important_info.append(techstack_helper_important_info(techstack))
+    async for techstack in techstack_collection.find({}, {"_id": 1, "name": 1, "owner": 1, "stargazers_count": 1, "topics":1, "forks": 1}):
+        techstacks_important_info.append(techstack_helper(techstack))
     return techstacks_important_info
 
 
@@ -97,6 +98,18 @@ async def retrieve_techstack_contribution_data(name: str, owner: str) -> dict:
         return techstack_helper(techstack)
     else:
         return None
+
+
+async def retrieve_top_ten_techstacks() -> dict:
+    """
+    Retrieve the top ten techstacks from the database based on highest to lowest stargazer count
+    :return: top 10 techstacks and their full metadata
+    """
+    techstacks = []
+    async for techstack in techstack_collection.find({},{"_id":0}).sort([('stargazers_count', -1)]).limit(10):
+        techstacks.append(techstack)
+
+    return techstacks
 
 
 async def retrieve_similar_repository_data(name: str, owner: str, num_repositories=5) -> list:
@@ -176,3 +189,14 @@ async def retrieve_nodelink_data(name: str, owner: str) -> list:
     techstack_nodelink_info = await techstack_collection.find_one({"name": name, "owner": owner},
                                                                   {"_id": 0, "name": 1, "owner": 1, "nodelink_data": 1})
     return techstack_nodelink_info
+async def retrieve_techstack_heatmap(name: str, owner: str) -> dict:
+    """
+    Retrieve techstack information for heatmap (No of Commits, Open Issues, Pull Requests)
+    :return: the response model for successful requests having heatmap information otherwise a HTTPException is raised
+    """
+
+    techstack_heatmap_info = await techstack_collection.find_one({"name": name, "owner": owner}, {"_id": 1, "name": 1, "owner": 1, "heatmap_data": 1 })
+    if techstack_heatmap_info:
+        return techstack_helper(techstack_heatmap_info)
+    else: 
+        return None

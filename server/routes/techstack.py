@@ -7,7 +7,10 @@ from server.database.techstack import (
     retrieve_techstack_important_info,
     retrieve_techstack_contribution_data,
     retrieve_similar_repository_data,
-    retrieve_nodelink_data
+    retrieve_nodelink_data,
+    retrieve_techstack_heatmap,
+    retrieve_top_ten_techstacks,
+    retrieve_similar_repository_data
 )
 from server.models.techstack import (
     ErrorResponseModel,
@@ -54,6 +57,17 @@ async def get_nodelink_data(name, owner):
     if nodelink_data:
         return ResponseModel(nodelink_data, "nodelink  data retrieved successfully")
     return ResponseModel(nodelink_data, "Empty list returned")
+@router.get("/topten", response_description="Techstack data retrieved")
+async def get_techstacks():
+    '''
+    Once called, starts the process of retrieving top 10 techstacks based on highest to lowest stargazer count.
+    :return: Response Model that gives indication that top ten techstack retrieval and their metadata,
+    is successful.
+    '''
+    techstacks = await retrieve_top_ten_techstacks()
+    if techstacks:
+        return ResponseModel(techstacks, "Techstacks data retrieved successfully")
+    return ResponseModel(techstacks, "Empty list returned")
 
 
 @router.get("/{name_owner}", response_description="Techstack data retrieved")
@@ -102,3 +116,23 @@ async def get_similar_repository_data(name, owner):
     if repos:
         return ResponseModel(repos, "Similar repository data retrieved")
     raise HTTPException(status_code=404, detail="Repository not found")
+
+
+@router.get("/heatmap/{name_owner}", response_description="Heatmap data retrieved")
+async def get_techstack_data(name, owner):
+    '''
+    Once the techstack name and owner name is provided, starts the process of retrieving heatmap data for the techstack
+    :param name: Endpoint which asks for techstack name
+    :param owner: Endpoint which asks for techstack owner name
+    :return: response model that indicates heatmap data retrieval success or failure
+    '''
+    techstack = await retrieve_techstack_heatmap(name,owner)
+   
+    if techstack:
+        return ResponseModel(techstack, "Techstack data retrieved successfully")
+    raise HTTPException(status_code=404, detail="Item not found")
+
+
+
+
+
