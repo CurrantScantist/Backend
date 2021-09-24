@@ -7,6 +7,7 @@ from server.database.techstack import (
     retrieve_techstack_important_info,
     retrieve_techstack_contribution_data,
     retrieve_similar_repository_data,
+    retrieve_nodelink_data,
     retrieve_techstack_heatmap,
     retrieve_top_ten_techstacks,
     retrieve_similar_repository_data
@@ -44,6 +45,18 @@ async def get_techstacks():
     if techstacks:
         return ResponseModel(techstacks, "Techstacks data retrieved successfully")
     return ResponseModel(techstacks, "Empty list returned")
+
+
+@router.get("/nodelink_data", response_description="nodelink data retrieved")
+async def get_nodelink_data(name, owner):
+    '''
+    Once called, will retrieve the nodelink data from the database
+    :return: Response model that gives indication that all nodelink data retrieval is complete
+    '''
+    nodelink_data = await retrieve_nodelink_data(name, owner)
+    if nodelink_data:
+        return ResponseModel(nodelink_data, "nodelink  data retrieved successfully")
+    return ResponseModel(nodelink_data, "Empty list returned")
 
 
 @router.get("/topten", response_description="Techstack data retrieved")

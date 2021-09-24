@@ -8,9 +8,11 @@ Retrieve techstack and techstack data from the mongodb database
 """
 # Connecting to MongoDB and getting the database test_db with the collection name repositories
 load_dotenv()
-PASSWORD=os.getenv('PASSWORD')
-USERNAME=os.getenv('NAME')
-CONNECTION_STRING=f"mongodb+srv://{USERNAME}:{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
+PASSWORD = os.getenv('PASSWORD')
+USERNAME = os.getenv('NAME')
+CONNECTION_STRING = f"mongodb+srv://{USERNAME}:" \
+                    f"{PASSWORD}@cluster0.vao3k.mongodb.net/test_db?retryWrites=true&w=majority&ssl=true" \
+                    f"&ssl_cert_reqs=CERT_NONE"
 database = DatabaseConnection(CONNECTION_STRING)
 database.connection_to_db("test_db")
 techstack_collection = database.database_name.get_collection("repositories")
@@ -159,7 +161,8 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     if len(topics) != 0:
         similar_repos = techstack_collection.find({"name": {"$ne": name}, "topics": {"$in": topics}},
                                                   {"name": 1, "owner": 1, "_id": 0,
-                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1, "topics": 1,
+                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1,
+                                                   "topics": 1,
                                                    "language": 1}) \
             .sort([('stargazers_count', -1)]).limit(num_repositories - 1)
 
@@ -182,6 +185,16 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     return repos
 
 
+async def retrieve_nodelink_data(name: str, owner: str) -> list:
+    """
+    Retrieve nodelink data informnation from the database
+    :param name: name of repository
+    :param owner: name of repository owner
+    :return: nodelink_info from the database
+    """
+    techstack_nodelink_info = await techstack_collection.find_one({"name": name, "owner": owner},
+                                                                  {"_id": 0, "name": 1, "owner": 1, "nodelink_data": 1})
+    return techstack_nodelink_info
 async def retrieve_techstack_heatmap(name: str, owner: str) -> dict:
     """
     Retrieve techstack information for heatmap (No of Commits, Open Issues, Pull Requests)
