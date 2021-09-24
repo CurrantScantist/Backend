@@ -57,6 +57,8 @@ async def get_nodelink_data(name, owner):
     if nodelink_data:
         return ResponseModel(nodelink_data, "nodelink  data retrieved successfully")
     return ResponseModel(nodelink_data, "Empty list returned")
+
+
 @router.get("/topten", response_description="Techstack data retrieved")
 async def get_techstacks():
     '''

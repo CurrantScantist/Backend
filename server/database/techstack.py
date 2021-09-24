@@ -186,6 +186,12 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
 
 
 async def retrieve_nodelink_data(name: str, owner: str) -> list:
+    """
+    Retrieve nodelink data informnation from the database
+    :param name: name of repository
+    :param owner: name of repository owner
+    :return: nodelink_info from the database
+    """
     techstack_nodelink_info = await techstack_collection.find_one({"name": name, "owner": owner},
                                                                   {"_id": 0, "name": 1, "owner": 1, "nodelink_data": 1})
     return techstack_nodelink_info
