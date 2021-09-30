@@ -124,9 +124,24 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     :param num_repositories: the maximum number of repositories to include in the response
     :return: the response model for successful requests otherwise a HTTPException is raised
     """
-    input_repo = await techstack_collection.find_one({"name": name, "owner": owner},
-                                                     {"topics": 1, "_id": 0, "num_components": 1,
-                                                      "num_vulnerabilities": 1, "size": 1, "language": 1})
+    search = {
+        "name": name,
+        "owner": owner,
+        "num_components": {"$exists": True},
+        "num_vulnerabilities": {"$exists": True},
+        "size": {"$exists": True},
+    }
+
+    projection = {
+        "name": 1, "owner": 1, "_id": 0,
+        "num_components": 1, "num_vulnerabilities": 1, "size": 1,
+        "topics": 1,
+        "language": 1,
+        "repo_colour": 1
+    }
+
+    input_repo = await techstack_collection.find_one(search, projection)
+
     if input_repo is None:
         return []
     try:
@@ -160,12 +175,11 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
         return processed_repos
 
     if len(topics) != 0:
-        similar_repos = techstack_collection.find({"name": {"$ne": name}, "topics": {"$in": topics}},
-                                                  {"name": 1, "owner": 1, "_id": 0,
-                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1,
-                                                   "topics": 1,
-                                                   "language": 1}) \
-            .sort([('stargazers_count', -1)]).limit(num_repositories - 1)
+        search["name"] = {"$ne": name}
+        search.pop("owner")
+        search["topics"] = {"$in": topics}
+        similar_repos = techstack_collection.find(search, projection).sort([('stargazers_count', -1)])\
+            .limit(num_repositories - 1)
 
         repos += await process_repos(similar_repos)
 
@@ -174,12 +188,10 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     if num_repositories_to_find == 0:
         return repos
 
-    similar_language_repos = techstack_collection.find({"name": {"$ne": name}, "language": input_repo["language"]},
-                                                       {"name": 1, "owner": 1, "_id": 0,
-                                                        "num_components": 1, "num_vulnerabilities": 1, "size": 1,
-                                                        "topics": 1,
-                                                        "language": 1}) \
-        .sort([('stargazers_count', -1)]).limit(num_repositories_to_find)
+    search.pop("topics")
+    search["language"] = input_repo["language"]
+    similar_language_repos = techstack_collection.find(search, projection).sort([('stargazers_count', -1)])\
+        .limit(num_repositories_to_find)
 
     repos += await process_repos(similar_language_repos)
 
