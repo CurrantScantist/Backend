@@ -132,7 +132,8 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     try:
         original_topics = input_repo["topics"]
         topics = original_topics.copy()
-        topics.remove(input_repo["language"].lower())
+        if input_repo["language"].lower() in topics:
+            topics.remove(input_repo["language"].lower())
     except KeyError:
         return []
 
@@ -195,6 +196,8 @@ async def retrieve_nodelink_data(name: str, owner: str) -> list:
     techstack_nodelink_info = await techstack_collection.find_one({"name": name, "owner": owner},
                                                                   {"_id": 0, "name": 1, "owner": 1, "nodelink_data": 1})
     return techstack_nodelink_info
+
+
 async def retrieve_techstack_heatmap(name: str, owner: str) -> dict:
     """
     Retrieve techstack information for heatmap (No of Commits, Open Issues, Pull Requests)
