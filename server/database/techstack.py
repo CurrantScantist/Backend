@@ -48,18 +48,6 @@ def techstack_helper_important_info(techstack) -> dict:
     }
 
 
-async def retrieve_techstacks():
-    '''
-    Retrieve all unique techstacks in the database
-    :return: all techstacks present in the database
-    '''
-    
-    techstacks = []
-    async for techstack in techstack_collection.find():
-        techstacks.append(techstack_helper(techstack))
-    return techstacks
-
-
 async def retrieve_techstack(name: str, owner: str) -> dict:
     '''
     Retrieve a specific techstack and its metadata, from the database with matching name and owner

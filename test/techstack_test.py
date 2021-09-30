@@ -54,35 +54,6 @@ def test_mongoDB_connection_fail():
     assert check, "There should be an issue in connection with MongoDB for authentication"
 
 
-# Positive test cases for techstack/detailed endpoint
-def test_endpoint_techstack_detailed_status_code():
-    response = client.get("/techstack/detailed")
-    assert response.status_code == 200, "f{response.status_code} coming from endpoint techstack/detailed"
-
-
-def test_endpoint_techstack_detailed_json_format():
-    check = False
-    response = client.get("/techstack/detailed")
-    try:
-        responses = response.json()
-        check = True
-    except ValueError as valueerror:
-        print(valueerror)
-
-    assert check, "API endpoint `techstack/detailed` is not responsding in JSON format"
-
-
-def test_endpoint_techstack_detailed_performance_sanity():
-    # time is in nanosecond (since the epoch: unix time)
-    maximum_tolerance_time = 1.0
-    t0 = time.time()
-    response = client.get("/techstack/detailed")
-    t1 = time.time()
-
-    total = t1 - t0
-    print(total)
-    assert total < maximum_tolerance_time, "API endpoint `techstack/detailed` is crossing performance threshold"
-
 # Positive test cases for /nodelink_data endpoint
 # def test_endpoint_nodelink_data_status_code():
 #
