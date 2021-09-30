@@ -115,6 +115,10 @@ async def get_similar_repository_data(name, owner):
     """
     repos = await retrieve_similar_repository_data(name, owner)
 
+    if len(repos) == 1:
+        if any([key not in repos[0] for key in ["num_components", "num_vulnerabilities", "size"]]):
+            raise HTTPException(status_code=404, detail="Input repository does not have the required dependency data")
+
     if repos:
         return ResponseModel(repos, "Similar repository data retrieved")
     raise HTTPException(status_code=404, detail="Repository not found")

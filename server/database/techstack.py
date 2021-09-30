@@ -118,7 +118,8 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     to be one of the 5 repositories). For repositories that have github topics, two repositories are considered similar
     if they have at least one tag in common. For repositories that don't have github topics, repositories that share the
     same predominant language are considered similar. In the case when there are more than 4 repositories that are
-    similar to the inputted repository, the most popular 4 are returned (measured based on the stargazers_count).
+    similar to the inputted repository, the most popular 4 are returned (measured based on the stargazers_count). Only
+    repositories that have the required data (dependency data) are included
     :param name: the name of the repository
     :param owner: the owner of the repository
     :param num_repositories: the maximum number of repositories to include in the response
@@ -140,10 +141,14 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
         "repo_colour": 1
     }
 
-    input_repo = await techstack_collection.find_one(search, projection)
+    input_repo = await techstack_collection.find_one({"name": name, "owner": owner}, projection)
 
     if input_repo is None:
         return []
+
+    if not all([key in input_repo for key in ["num_components", "num_vulnerabilities", "size"]]):
+        return [input_repo]
+
     try:
         original_topics = input_repo["topics"]
         topics = original_topics.copy()
