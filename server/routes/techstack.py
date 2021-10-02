@@ -3,7 +3,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
 from server.database.techstack import (
     retrieve_techstack,
-    retrieve_techstacks,
     retrieve_techstack_important_info,
     retrieve_techstack_contribution_data,
     retrieve_similar_repository_data,
@@ -20,18 +19,6 @@ from server.models.techstack import (
 )
 
 router = APIRouter()
-
-
-@router.get("/detailed", response_description="Techstacks retrieved")
-async def get_techstacks():
-    '''
-    Once called, starts the process of retrieving all techstacks, accompanied with all their metadata.
-    :return:  Response Model that gives indication of all techstack retrieval success or failure
-    '''
-    techstacks = await retrieve_techstacks()
-    if techstacks:
-        return ResponseModel(techstacks, "Techstacks data retrieved successfully")
-    return ResponseModel(techstacks, "Empty list returned")
 
 
 @router.get("/list", response_description="Techstacks retrieved")
@@ -114,6 +101,10 @@ async def get_similar_repository_data(name, owner):
     :return: the response model for successful requests otherwise a HTTPException is raised
     """
     repos = await retrieve_similar_repository_data(name, owner)
+
+    if len(repos) == 1:
+        if any([key not in repos[0] for key in ["num_components", "num_vulnerabilities", "size"]]):
+            raise HTTPException(status_code=404, detail="Input repository does not have the required dependency data")
 
     if repos:
         return ResponseModel(repos, "Similar repository data retrieved")

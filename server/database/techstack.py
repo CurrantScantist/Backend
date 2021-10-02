@@ -48,18 +48,6 @@ def techstack_helper_important_info(techstack) -> dict:
     }
 
 
-async def retrieve_techstacks():
-    '''
-    Retrieve all unique techstacks in the database
-    :return: all techstacks present in the database
-    '''
-    
-    techstacks = []
-    async for techstack in techstack_collection.find():
-        techstacks.append(techstack_helper(techstack))
-    return techstacks
-
-
 async def retrieve_techstack(name: str, owner: str) -> dict:
     '''
     Retrieve a specific techstack and its metadata, from the database with matching name and owner
@@ -106,7 +94,8 @@ async def retrieve_top_ten_techstacks() -> dict:
     :return: top 10 techstacks and their full metadata
     """
     techstacks = []
-    async for techstack in techstack_collection.find({},{"_id":0}).sort([('stargazers_count', -1)]).limit(10):
+    async for techstack in techstack_collection.find({}, {"_id": 0, "name": 1, "owner": 1, "stargazers_count": 1})\
+            .sort([('stargazers_count', -1)]).limit(10):
         techstacks.append(techstack)
 
     return techstacks
@@ -118,21 +107,42 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     to be one of the 5 repositories). For repositories that have github topics, two repositories are considered similar
     if they have at least one tag in common. For repositories that don't have github topics, repositories that share the
     same predominant language are considered similar. In the case when there are more than 4 repositories that are
-    similar to the inputted repository, the most popular 4 are returned (measured based on the stargazers_count).
+    similar to the inputted repository, the most popular 4 are returned (measured based on the stargazers_count). Only
+    repositories that have the required data (dependency data) are included
     :param name: the name of the repository
     :param owner: the owner of the repository
     :param num_repositories: the maximum number of repositories to include in the response
     :return: the response model for successful requests otherwise a HTTPException is raised
     """
-    input_repo = await techstack_collection.find_one({"name": name, "owner": owner},
-                                                     {"topics": 1, "_id": 0, "num_components": 1,
-                                                      "num_vulnerabilities": 1, "size": 1, "language": 1})
+    search = {
+        "name": name,
+        "owner": owner,
+        "num_components": {"$exists": True},
+        "num_vulnerabilities": {"$exists": True},
+        "size": {"$exists": True},
+    }
+
+    projection = {
+        "name": 1, "owner": 1, "_id": 0,
+        "num_components": 1, "num_vulnerabilities": 1, "size": 1,
+        "topics": 1,
+        "language": 1,
+        "repo_colour": 1
+    }
+
+    input_repo = await techstack_collection.find_one({"name": name, "owner": owner}, projection)
+
     if input_repo is None:
         return []
+
+    if not all([key in input_repo for key in ["num_components", "num_vulnerabilities", "size"]]):
+        return [input_repo]
+
     try:
         original_topics = input_repo["topics"]
         topics = original_topics.copy()
-        topics.remove(input_repo["language"].lower())
+        if input_repo["language"].lower() in topics:
+            topics.remove(input_repo["language"].lower())
     except KeyError:
         return []
 
@@ -159,12 +169,11 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
         return processed_repos
 
     if len(topics) != 0:
-        similar_repos = techstack_collection.find({"name": {"$ne": name}, "topics": {"$in": topics}},
-                                                  {"name": 1, "owner": 1, "_id": 0,
-                                                   "num_components": 1, "num_vulnerabilities": 1, "size": 1,
-                                                   "topics": 1,
-                                                   "language": 1}) \
-            .sort([('stargazers_count', -1)]).limit(num_repositories - 1)
+        search["name"] = {"$ne": name}
+        search.pop("owner")
+        search["topics"] = {"$in": topics}
+        similar_repos = techstack_collection.find(search, projection).sort([('stargazers_count', -1)])\
+            .limit(num_repositories - 1)
 
         repos += await process_repos(similar_repos)
 
@@ -173,12 +182,10 @@ async def retrieve_similar_repository_data(name: str, owner: str, num_repositori
     if num_repositories_to_find == 0:
         return repos
 
-    similar_language_repos = techstack_collection.find({"name": {"$ne": name}, "language": input_repo["language"]},
-                                                       {"name": 1, "owner": 1, "_id": 0,
-                                                        "num_components": 1, "num_vulnerabilities": 1, "size": 1,
-                                                        "topics": 1,
-                                                        "language": 1}) \
-        .sort([('stargazers_count', -1)]).limit(num_repositories_to_find)
+    search.pop("topics")
+    search["language"] = input_repo["language"]
+    similar_language_repos = techstack_collection.find(search, projection).sort([('stargazers_count', -1)])\
+        .limit(num_repositories_to_find)
 
     repos += await process_repos(similar_language_repos)
 
@@ -195,6 +202,8 @@ async def retrieve_nodelink_data(name: str, owner: str) -> list:
     techstack_nodelink_info = await techstack_collection.find_one({"name": name, "owner": owner},
                                                                   {"_id": 0, "name": 1, "owner": 1, "nodelink_data": 1})
     return techstack_nodelink_info
+
+
 async def retrieve_techstack_heatmap(name: str, owner: str) -> dict:
     """
     Retrieve techstack information for heatmap (No of Commits, Open Issues, Pull Requests)
