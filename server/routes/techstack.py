@@ -14,15 +14,13 @@ from server.database.techstack import (
 from server.models.techstack import (
     ErrorResponseModel,
     ResponseModel,
-    TechstackSchema,
-    UpdateTechstackModel,
 )
 
 router = APIRouter()
 
 
 @router.get("/list", response_description="Techstacks retrieved")
-async def get_techstacks():
+async def get_list_of_techstacks():
     '''
     Once called, starts the process of retrieving all techstacks, but only accompanied with their id, name and owner.
     :return: Response Model that gives indication that all techstack retrieval and their id,name and owner metadata,
@@ -47,7 +45,7 @@ async def get_nodelink_data(name, owner):
 
 
 @router.get("/topten", response_description="Techstack data retrieved")
-async def get_techstacks():
+async def get_top_ten_techstacks():
     '''
     Once called, starts the process of retrieving top 10 techstacks based on highest to lowest stargazer count.
     :return: Response Model that gives indication that top ten techstack retrieval and their metadata,
@@ -60,7 +58,7 @@ async def get_techstacks():
 
 
 @router.get("/{name_owner}", response_description="Techstack data retrieved")
-async def get_techstack_data(name, owner):
+async def get_specific_techstack_data(name, owner):
     '''
     Once the techstack name and owner name is provided, starts the process of retrieving the specified techstack data
     :param name: Endpoint which asks for techstack name
@@ -74,7 +72,7 @@ async def get_techstack_data(name, owner):
 
 
 @router.get("/contribution/{name_owner}", response_description="Techstack data retrieved")
-async def get_techstack_data(name, owner):
+async def get_techstack_contribution_data(name, owner):
     '''
     Once the techstack name and owner name is provided, starts the process of retrieving the specified techstack data
     :param name: Endpoint which asks for techstack name
@@ -112,7 +110,7 @@ async def get_similar_repository_data(name, owner):
 
 
 @router.get("/heatmap/{name_owner}", response_description="Heatmap data retrieved")
-async def get_techstack_data(name, owner):
+async def get_heatmap_data_for_techstack(name, owner):
     '''
     Once the techstack name and owner name is provided, starts the process of retrieving heatmap data for the techstack
     :param name: Endpoint which asks for techstack name

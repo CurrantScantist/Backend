@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 @router.get("/{name_owner_tag_name}", response_description="SCA data retrieved")
-async def get_sca_data(name, owner,tag_name):
+async def get_sca_data_using_name_owner_tag_name(name, owner,tag_name):
     '''
     Once the techstack name and owner name and tag_name is provided, it signals the start of the process of retrieving the specified sca_data
     :param name: Endpoint which asks for release name
