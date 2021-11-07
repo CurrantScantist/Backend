@@ -1,7 +1,7 @@
 # Backend
 
 
-![build](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+![build](https://github.com/CurrantScantist/Backend/actions/workflows/main.yml/badge.svg)
 
 Python based backend server using FASTAPI framework
 
