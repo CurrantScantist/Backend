@@ -23,6 +23,7 @@ jobs:
           pip install --upgrade pip
           pip install pytest
           pip install coverage
+          pip install coverage-badge
           pip install -r requirements.txt
       - name: Test with pytest
     
@@ -34,4 +35,10 @@ jobs:
           pytest test/techstack_test.py
           pytest test/techstack_metadata_test.py
           pytest test/sca_data_endpoint_test.py
-          coverage run -m pytest -v test && coverage report -m 
+          coverage run -m pytest -v test && coverage report -m
+          coverage-badge > coverage-badge.svg
+      - name: code coverage badge
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-badge
+          path: coverage-badge.svg
