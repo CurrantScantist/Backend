@@ -37,6 +37,7 @@ jobs:
           pytest test/sca_data_endpoint_test.py
           coverage run -m pytest -v test && coverage report -m
           coverage-badge > coverage-badge.svg
+          readlink -f coverage-badge.svg
       - name: code coverage badge
         uses: actions/upload-artifact@v2
         with:
