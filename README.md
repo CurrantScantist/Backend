@@ -1,5 +1,8 @@
 # Backend
 
+
+![build](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+
 Python based backend server using FASTAPI framework
 
 How to use in a development setting.
