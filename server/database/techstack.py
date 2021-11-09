@@ -55,9 +55,15 @@ async def retrieve_techstack(name: str, owner: str) -> dict:
     :param owner: owner attribute of the techstack
     :return: Call techstack_helper() on the given techstack, which returns its respective metadata
     '''
-    techstack = await techstack_collection.find_one({"name": name, "owner": owner})
-    if techstack:
-        return techstack_helper(techstack)
+    projection = {
+        "_id": 0,
+        "heatmap_data": 0,
+        "commits_per_author": 0,
+        "commits_per_month": 0,
+        "nodelink_data": 0
+    }
+    techstack = await techstack_collection.find_one({"name": name, "owner": owner}, projection)
+    return techstack
 
 
 async def retrieve_techstack_important_info() -> dict:
