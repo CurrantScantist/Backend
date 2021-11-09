@@ -12,23 +12,6 @@ database = DatabaseConnection(CONNECTION_STRING)
 database.connection_to_db("test_db")
 release_collection = database.database_name.get_collection("releases")
 
-# helpers
-
-def release_helper(release) -> dict:
-    """
-    Helps retrieve_release return release metadata in dictionary form.
-    :param release: release object from database
-    :return: release metadata in an ordered dictionary format
-    """
-    return {
-        "id": str(release["_id"]),
-        "name": release["name"],
-        "owner": release["owner"],
-        "tag_name": release["tag_name"],
-        "LOC": release["LOC"],
-        "committed_date": release["committed_date"]
-    }
-
 
 # Retrieve all releases for name and owner
 async def retrieve_releases(name: str, owner: str) -> list:
