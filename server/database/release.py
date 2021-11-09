@@ -23,6 +23,6 @@ async def retrieve_releases(name: str, owner: str) -> list:
     '''
     
     releases = []
-    async for release in release_collection.find({"name": name, "owner": owner}, {"_id": 0}).sort([('committed_date', 1)]):
+    async for release in release_collection.find({"name": name, "owner": owner}, {"_id": 0, "LOC": 0}).sort([('committed_date', 1)]):
         releases.append(release)
     return releases
