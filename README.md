@@ -4,6 +4,7 @@
 </p>
 
 ![build](https://github.com/CurrantScantist/Backend/actions/workflows/main.yml/badge.svg)
+![version](https://img.shields.io/badge/version-1.0.0-blue)
 
 
 ## Introduction
