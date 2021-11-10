@@ -3,7 +3,7 @@
 <!--   <img src=""/> -->
 </p>
 
-![build](https://github.com/CurrantScantist/Backend/actions/workflows/main.yml/bad
+![build](https://github.com/CurrantScantist/Backend/actions/workflows/main.yml/badge.svg)
 
 
 ## Introduction
@@ -50,6 +50,11 @@ If not, please checkout configuration section.
 Activate your python3.6+ virtual environment.  
 ```python main.py```
 
+#### API Doc
+1. Normal Excecution 
+2. visit ```http://127.0.0.1:3333/docs```
+
+
 #### Normal Test Execution
 
 
@@ -69,9 +74,13 @@ coverage run -m pytest -v test && coverage report -m
 
 
 ## APIs
-This project has several APIs exposed:
+This project has several APIs:
 * The API Serves the communication with database and any device. 
 * The ```GET``` request has been used predominately in the API endpoints.
+
+### Endpoints
+![image](https://user-images.githubusercontent.com/47905424/141135175-ec37e4c8-05dd-444f-91d9-fedb851068a0.png)
+
 
 
 ## Unit / Automated Tests
