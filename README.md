@@ -144,6 +144,16 @@ CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "3333"]
 
 Note: Configuration might not be updated. Therefore, please confirm with DOCKER file from the repository only. 
 
+### Staging 
+
+The main branch continuous deploy on the heorku as staging environment.  
+[staging environment](https://scantist-backend.herokuapp.com/)  
+Please contact current developers for further configuration of heroku environment, 
+
+### Production
+Currently, production server has been deployed on the Scantist local machine.
+
+### 
 
 ## Feedback
 
