@@ -21,4 +21,4 @@ app.include_router(SCARouter, tags=["sca_data"], prefix="/sca_data")
 
 @app.get("/", tags=["Root"])
 async def read_root():
-    return {"message": "Welcome to this fantastic app!"}
+    return {"message": "Welcome to this Currant Scantist Backend Services!"}
