@@ -152,7 +152,6 @@ All bugs, feature requests, pull requests, feedback, etc., are welcome. [Create 
 ## Next Step
 
 * API limiter
-* Add on APIs as per the new feature request
 * Minimise additional dependencies
 * Area of improvement regarding API's performance
 
