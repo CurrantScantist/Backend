@@ -8,7 +8,7 @@
 
 
 ## Introduction
-The Backend service is being used to establish communication between Database. 
+The Backend service is being used to establish communication with database. 
 
 #### Python Framework
 [FASTAPI](https://fastapi.tiangolo.com/) framework is a modern, fast, robust, easy scalable  web framework for building APIs with Python 3.6+.
